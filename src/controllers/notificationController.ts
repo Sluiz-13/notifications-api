@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import pool from '../database/connection';
 import jwt from 'jsonwebtoken';
+import { io } from '../server';
 
 // Função auxiliar para pegar o userId do token
 const getUserId = (req: Request): number => {
@@ -25,6 +26,7 @@ export const createNotification = async (req: Request, res: Response) => {
       'INSERT INTO notifications (user_id, title, message) VALUES ($1, $2, $3) RETURNING *',
       [userId, title, message]
     );
+    io.to(`user_${userId}`).emit('nova_notificacao', result.rows[0]);
 
     return res.status(201).json(result.rows[0]);
 
@@ -32,6 +34,7 @@ export const createNotification = async (req: Request, res: Response) => {
     console.error(error);
     return res.status(500).json({ error: "Erro interno no servidor" });
   }
+
 }
 
 // Listar notificações do usuário
