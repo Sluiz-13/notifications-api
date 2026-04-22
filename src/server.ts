@@ -5,6 +5,7 @@ import { Server } from 'socket.io';
 import dotenv from 'dotenv';
 import runMigrations from './database/migrations';
 import authRoutes from "./routes/authRoutes"
+import notificationRoutes from "./routes/notificationRoutes"
 
 dotenv.config();
 runMigrations();
@@ -23,7 +24,8 @@ export const io = new Server(httpServer, {
 // Middlewares
 app.use(cors());
 app.use(express.json());
-app.use('/auth', authRoutes)
+app.use('/auth', authRoutes);
+app.use('/notifications', notificationRoutes);
 
 // Rota de teste
 app.get('/', (req, res) => {
